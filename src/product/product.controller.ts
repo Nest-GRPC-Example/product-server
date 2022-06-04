@@ -1,4 +1,4 @@
-import { Controller, Inject } from '@nestjs/common';
+import { Controller, Inject, Logger } from '@nestjs/common';
 import { GrpcMethod } from '@nestjs/microservices';
 import {
   CreateProductRequestDto,
@@ -17,16 +17,19 @@ import { ProductService } from './product.service';
 export class ProductController {
   @Inject(ProductService)
   private readonly service: ProductService;
+  private logger = new Logger('MSA-PRODUCT');
 
   @GrpcMethod(PRODUCT_SERVICE_NAME, 'CreateProduct')
   private createProduct(
     payload: CreateProductRequestDto,
   ): Promise<CreateProductResponse> {
+    this.logger.log(JSON.stringify(payload));
     return this.service.createProduct(payload);
   }
 
   @GrpcMethod(PRODUCT_SERVICE_NAME, 'FindOne')
   private findOne(payload: FindOneRequestDto): Promise<FindOneResponse> {
+    this.logger.log(JSON.stringify(payload));
     return this.service.findOne(payload);
   }
 
@@ -34,6 +37,7 @@ export class ProductController {
   private decreaseStock(
     payload: DecreaseStockRequestDto,
   ): Promise<DecreaseStockResponse> {
+    this.logger.log(JSON.stringify(payload));
     return this.service.decreaseStock(payload);
   }
 }
